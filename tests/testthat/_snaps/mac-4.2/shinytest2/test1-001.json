@@ -1,0 +1,36 @@
+{
+  "input": {
+    "api": "asdsdsd",
+    "end_date": "2022-06-01",
+    "seriousness": "0",
+    "start_date": "2004-01-01",
+    "submit": 0
+  },
+  "output": {
+    "download_button": {
+      "message": "",
+      "call": "NULL",
+      "type": [
+        "shiny.silent.error",
+        "validation"
+      ]
+    },
+    "message": "Your request did not return any result.<br>Please try again!",
+    "plt": {
+      "message": "",
+      "call": "NULL",
+      "type": [
+        "shiny.silent.error",
+        "validation"
+      ]
+    },
+    "tble": [
+      "",
+      "NULL",
+      "c(\"shiny.silent.error\", \"validation\")"
+    ]
+  },
+  "export": {
+    "api_data": null
+  }
+}
