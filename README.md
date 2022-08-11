@@ -9,9 +9,6 @@ Connect, there are three paths you can follow:
  - Programmatic deployment
 
 This repository is an example of the third deployment path using GitHub Actions as
-a CI/CD pipeline to test and deploy a Shiny application to RStudio Connect.
+a CI/CD pipeline to test and deploy a Shiny application to RStudio Connect. 
 
-The `.github/workflows/test-and-connect-publish.yaml` file allows for the specification
-of r-version and whether or not to use the public RSPM to install packages.
-`renv` is used to restore the correct package environment before running tests with
-shinytest2, creating a manifest.json file and publishing the Shiny application to RStudio Connect.
+If you want to learn more about it you can read: [https://solutions.rstudio.com/data-science-admin/deploy/ci-cd/github-actions/](https://solutions.rstudio.com/data-science-admin/deploy/ci-cd/github-actions/)
