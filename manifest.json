@@ -3171,7 +3171,7 @@
       "checksum": "819eb7a1b14df1b3fed2fe85fa3d88b1"
     },
     ".Rprofile": {
-      "checksum": "e8cfdb8312c6712e02c789ec3f412250"
+      "checksum": "30e1b49ac3f5272b39112af680ec795f"
     },
     "app.R": {
       "checksum": "21f208f773bc7fae93c6fce02a6bbea3"
@@ -3189,7 +3189,7 @@
       "checksum": "c7ad3d7fdfeeaf7ef90b07b4a65cb3ea"
     },
     "tests/testthat/test-shinytest2.R": {
-      "checksum": "2af8c6f9f3e4b246f2584047a454e555"
+      "checksum": "96ebb72d51558b56829cff882c5fc5df"
     }
   },
   "users": null
