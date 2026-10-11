@@ -29,18 +29,19 @@ jobs:
         continue-on-error: true
         shell: Rscript {0}
         run: |
-          shinytest2::test_app()
+          shinytest2::test_app("app")
           
       - name: Create manifest.json
         shell: Rscript {0}
         run: |
-          rsconnect::writeManifest()
+          rsconnect::writeManifest("app")
           
       - name: Publish Connect content
+        if: github.event_name != 'pull_request'
         uses: rstudio/actions/connect-publish@main
         with:
           url: ${{ secrets.CONNECT_SERVER }}
           api-key: ${{ secrets.CONNECT_API_KEY }}
           access-type: logged_in
           dir: |
-            .:/shiny-app-demo-cicd-github-actions
+            app:/shiny-app-demo-cicd-github-actions

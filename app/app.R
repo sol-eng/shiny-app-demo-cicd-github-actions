@@ -1,12 +1,10 @@
 # https://jymaze.shinyapps.io/open_fda_a
 
 library(shiny)
-library(shiny)
 library(jsonlite)
 library(ggplot2)
 library(stringr)
 library(DT)
-library(rsconnect)
 
 ui<- fluidPage(
   titlePanel("Adverse Events Query to OpenFDA", windowTitle = "Adverse Events Query to OpenFDA"),
