@@ -9,6 +9,14 @@ on:
 jobs:
   test-and-connect-publish:
     runs-on: ubuntu-24.04
+    env:
+      # Keep the literal __linux__/noble binary URL from renv.lock in manifest.json.
+      # rsconnect::writeManifest() resolves dependencies through renv; without this it
+      # would normalize the pinned noble URL to a portable (source) one.
+      RENV_CONFIG_PPM_ENABLED: FALSE
+      # Actually run the shinytest2 browser tests in CI. shinytest2 skips them on CRAN
+      # by default; NOT_CRAN=true opts in so the Test step is a real deploy gate.
+      NOT_CRAN: "true"
     steps:
       - uses: actions/checkout@v4
 
@@ -22,20 +30,18 @@ jobs:
       - uses: r-lib/actions/setup-renv@v2
           
       - name: Test Shiny App
-        # shinytest2 visual snapshots are environment-sensitive here: the app
-        # screenshots a live-OpenFDA-backed DT table that renders at 0 height on
-        # headless CI, so the screenshot step errors. Keep it non-blocking so the
-        # CI/CD deploy demo still proceeds and publishes to Connect.
-        continue-on-error: true
+        # Run the full shinytest2 suite. No continue-on-error: a failing test fails
+        # the job and blocks the manifest/publish steps below, so a push to main only
+        # deploys when the tests pass (test-then-deploy gating, as the original does).
         shell: Rscript {0}
         run: |
-          shinytest2::test_app("app")
-          
+          shinytest2::test_app()
+
       - name: Create manifest.json
         shell: Rscript {0}
         run: |
-          rsconnect::writeManifest("app")
-          
+          rsconnect::writeManifest()
+
       - name: Publish Connect content
         if: github.event_name != 'pull_request'
         uses: rstudio/actions/connect-publish@main
@@ -44,4 +50,4 @@ jobs:
           api-key: ${{ secrets.CONNECT_API_KEY }}
           access-type: logged_in
           dir: |
-            app:/shiny-app-demo-cicd-github-actions
+            .:/shiny-app-demo-cicd-github-actions
