@@ -9,6 +9,12 @@ on:
 jobs:
   test-and-connect-publish:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      # Trusted publishing (keyless OIDC auth) additionally needs `id-token: write`,
+      # and PR draft previews need `pull-requests: write`. Neither is enabled here
+      # because this workflow authenticates with an API key and does not deploy on
+      # pull requests; see the notes on the Publish step below.
     env:
       # Keep the literal __linux__/noble binary URL from renv.lock in manifest.json.
       # rsconnect::writeManifest() resolves dependencies through renv; without this it
@@ -28,7 +34,7 @@ jobs:
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-renv@v2
-          
+
       - name: Test Shiny App
         # Run the full shinytest2 suite. No continue-on-error: a failing test fails
         # the job and blocks the manifest/publish steps below, so a push to main only
@@ -38,16 +44,24 @@ jobs:
           shinytest2::test_app()
 
       - name: Create manifest.json
+        # The deploy action deploys a root manifest.json as-is (posit connect deploy
+        # manifest), so regenerate it from the restored renv library before publishing.
         shell: Rscript {0}
         run: |
           rsconnect::writeManifest()
 
       - name: Publish Connect content
+        # Deploy only on push to main / manual dispatch, preserving the original
+        # gate. The deploy action updates an existing content item identified by
+        # CONNECT_CONTENT_GUID; it does not create net-new content, so that item
+        # must already exist on Connect (deploy it once by any means to obtain its
+        # GUID). To instead stage a reviewable draft preview on each pull request,
+        # drop this `if`, add `pull-requests: write` above and `github-token:
+        # ${{ github.token }}` below (requires Connect 2025.07.0+).
         if: github.event_name != 'pull_request'
-        uses: rstudio/actions/connect-publish@main
+        uses: posit-dev/connect-actions/deploy@main
         with:
-          url: ${{ secrets.CONNECT_SERVER }}
-          api-key: ${{ secrets.CONNECT_API_KEY }}
-          access-type: logged_in
-          dir: |
-            .:/shiny-app-demo-cicd-github-actions
+          connect-server: ${{ secrets.CONNECT_SERVER }}
+          connect-api-key: ${{ secrets.CONNECT_API_KEY }}
+          content-guid: ${{ vars.CONNECT_CONTENT_GUID }}
+          draft: false
